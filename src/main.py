@@ -1,5 +1,6 @@
 import csv
 import datetime
+from decimal import Decimal
 
 
 class Image:
@@ -7,7 +8,7 @@ class Image:
     magical_value = None
 
     def __init__(self, date, magical_value):
-        self.magical_value = magical_value
+        self.magical_value = float(magical_value)
         self.date = date
 
 
@@ -92,9 +93,10 @@ def get_pairs_in_window_with_threshold(window, date):
         # This selects the closest next date and substracts two days to see if its within window
         while index + 1 < len(images):
             next_date = datetime.date.fromisoformat(images[index+1].date)
-            if (next_date - selected_date).days <= window:
+            rating = (images[index].magical_value * images[index+1].magical_value) % 16
+            if (next_date - selected_date).days <= window and rating >= 8:
                 # print(date + "," + images[index+1].date)
-                csv_writer.writerow([date, images[index + 1].date])
+                csv_writer.writerow([date, images[index + 1].date, "{:.2E}".format(rating) ])
             index += 1
 
 
@@ -136,8 +138,7 @@ if __name__ == '__main__':
     # Ready the output file with correct headers
     with open('output/18-day-pair-with-threshold.csv', mode='w', newline='') as output:
         csv_writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        csv_writer.writerow(["Date A", "Date B"])
+        csv_writer.writerow(["Date A", "Date B", "Magic Value"])
 
     for img in images:
-        #get_pairs_in_window_with_threshold(18, img.date)
-        pass
+        get_pairs_in_window_with_threshold(18, img.date)
