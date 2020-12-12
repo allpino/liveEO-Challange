@@ -88,15 +88,16 @@ def get_pairs_in_window_with_threshold(window, date):
     with open('output/18-day-pair-with-threshold.csv', mode='a+', newline='') as output:
 
         csv_writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        base_index = index
 
         selected_date = datetime.date.fromisoformat(date)
         # This selects the closest next date and substracts two days to see if its within window
         while index + 1 < len(images):
             next_date = datetime.date.fromisoformat(images[index+1].date)
-            rating = (images[index].magical_value * images[index+1].magical_value) % 16
+            rating = (images[base_index].magical_value * images[index+1].magical_value) % 16
             if (next_date - selected_date).days <= window and rating >= 8:
                 # print(date + "," + images[index+1].date)
-                csv_writer.writerow([date, images[index + 1].date, "{:.2E}".format(rating) ])
+                csv_writer.writerow([date, images[index + 1].date, "{:.5E}".format(rating) ])
             index += 1
 
 
