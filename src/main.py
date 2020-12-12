@@ -1,4 +1,5 @@
 import csv
+import datetime
 
 
 class Image:
@@ -10,7 +11,7 @@ class Image:
         self.date = date
 
 
-# Writer function for part 1
+# Helper function for part 1
 def get_closest_pairs(num_of_pairs, date):
 
     # First find given date
@@ -21,7 +22,8 @@ def get_closest_pairs(num_of_pairs, date):
     else:
         index = -1
 
-    # If given date DNE raise Error. In theory, this should not happen at all since we're iterating already existing list
+    # If given date DNE raise Error.
+    # In theory, this should not happen at all since we're iterating already existing list
     if index == -1:
         raise ValueError("Given date does not exist in input file")
 
@@ -35,6 +37,65 @@ def get_closest_pairs(num_of_pairs, date):
             if index + i < len(images):
                 # print(date + "," + images[index + i].date)
                 csv_writer.writerow([date, images[index + i].date])
+
+
+# Helper function for part 2
+def get_pairs_in_window(window, date):
+
+    # First find given date
+    index = 0
+    for index, image in enumerate(images):
+        if image.date == date:
+            break
+    else:
+        index = -1
+
+    # If given date DNE raise Error.
+    # In theory, this should not happen at all since we're iterating already existing list
+    if index == -1:
+        raise ValueError("Given date does not exist in input file")
+
+    with open('output/18-day-pair.csv', mode='a+', newline='') as output:
+        csv_writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+        selected_date = datetime.date.fromisoformat(date)
+        # This selects the closest next date and substracts two days to see if its within window
+        while index + 1 < len(images):
+            next_date = datetime.date.fromisoformat(images[index + 1].date)
+            if (next_date - selected_date).days <= window:
+                # print(date + "," + images[index+1].date)
+                csv_writer.writerow([date, images[index + 1].date])
+            index += 1
+
+
+# Helper function for part 3
+def get_pairs_in_window_with_threshold(window, date):
+
+    # First find given date
+    index = 0
+    for index, image in enumerate(images):
+        if image.date == date:
+            break
+    else:
+        index = -1
+
+    # If given date DNE raise Error.
+    # In theory, this should not happen at all since we're iterating already existing list
+    if index == -1:
+        raise ValueError("Given date does not exist in input file")
+
+    with open('output/18-day-pair-with-threshold.csv', mode='a+', newline='') as output:
+
+        csv_writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+        selected_date = datetime.date.fromisoformat(date)
+        # This selects the closest next date and substracts two days to see if its within window
+        while index + 1 < len(images):
+            next_date = datetime.date.fromisoformat(images[index+1].date)
+            if (next_date - selected_date).days <= window:
+                # print(date + "," + images[index+1].date)
+                csv_writer.writerow([date, images[index + 1].date])
+            index += 1
 
 
 if __name__ == '__main__':
@@ -62,4 +123,21 @@ if __name__ == '__main__':
     for img in images:
         get_closest_pairs(3, img.date)
 
-    
+    # Part 2
+    # Ready the output file with correct headers
+    with open('output/18-day-pair.csv', mode='w', newline='') as output:
+        csv_writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        csv_writer.writerow(["Date A", "Date B"])
+
+    for img in images:
+        get_pairs_in_window(18, img.date)
+
+    # Part 3
+    # Ready the output file with correct headers
+    with open('output/18-day-pair-with-threshold.csv', mode='w', newline='') as output:
+        csv_writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        csv_writer.writerow(["Date A", "Date B"])
+
+    for img in images:
+        #get_pairs_in_window_with_threshold(18, img.date)
+        pass
