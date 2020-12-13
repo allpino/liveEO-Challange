@@ -1,11 +1,13 @@
 import csv
 import datetime
-
-
-# Helper class to hold Image values
 import sys
 
+""" 
+    I have used this tutorial for CSV part(s).
+    https://realpython.com/python-csv/
+"""
 
+# Helper class to hold Image values
 class Image:
     date = None
     magical_value = None
